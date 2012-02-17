@@ -180,10 +180,12 @@ void JNICALL jrst_EventFramePop (jvmtiEnv *jvmti_env,
 
 void JNICALL jrst_EventGarbageCollectionFinish (jvmtiEnv *jvmti_env)
 {
+  trace_event_gc_finish();
 }
 
 void JNICALL jrst_EventGarbageCollectionStart (jvmtiEnv *jvmti_env)
 {
+  trace_event_gc_start();
 }
 
 void JNICALL jrst_EventMethodEntry (jvmtiEnv *jvmti_env,
@@ -207,6 +209,10 @@ void JNICALL jrst_EventMonitorContendedEnter (jvmtiEnv *jvmti_env,
                                               jthread thread,
                                               jobject object)
 {
+  jlong tag;
+  jvmtiError error = (*GET_JVMTI())->GetTag(GET_JVMTI(), object, &tag);
+  jrst_check_error(GET_JVMTI(), error, "Cannot get object tag");
+  trace_event_monitor_contended_enter(jvmti_env, thread, (int) tag);
 }
 
 void JNICALL jrst_EventMonitorContendedEntered (jvmtiEnv *jvmti_env,
@@ -214,6 +220,10 @@ void JNICALL jrst_EventMonitorContendedEntered (jvmtiEnv *jvmti_env,
                                                 jthread thread,
                                                 jobject object)
 {
+  jlong tag;
+  jvmtiError error = (*GET_JVMTI())->GetTag(GET_JVMTI(), object, &tag);
+  jrst_check_error(GET_JVMTI(), error, "Cannot get object tag");
+  trace_event_monitor_contended_entered(jvmti_env, thread, (int) tag);
 }
 
 void JNICALL jrst_EventMonitorWait (jvmtiEnv *jvmti_env,
@@ -222,6 +232,10 @@ void JNICALL jrst_EventMonitorWait (jvmtiEnv *jvmti_env,
                                     jobject object,
                                     jlong timeout)
 {
+  jlong tag;
+  jvmtiError error = (*GET_JVMTI())->GetTag(GET_JVMTI(), object, &tag);
+  jrst_check_error(GET_JVMTI(), error, "Cannot get object tag");
+  trace_event_monitor_wait(jvmti_env, thread, (int) tag);
 }
 
 void JNICALL jrst_EventMonitorWaited (jvmtiEnv *jvmti_env,
@@ -230,6 +244,10 @@ void JNICALL jrst_EventMonitorWaited (jvmtiEnv *jvmti_env,
                                       jobject object,
                                       jboolean timed_out)
 {
+  jlong tag;
+  jvmtiError error = (*GET_JVMTI())->GetTag(GET_JVMTI(), object, &tag);
+  jrst_check_error(GET_JVMTI(), error, "Cannot get object tag");
+  trace_event_monitor_waited(jvmti_env, thread, (int) tag);
 }
 
 void JNICALL jrst_EventNativeMethodBind (jvmtiEnv *jvmti_env,
@@ -244,6 +262,7 @@ void JNICALL jrst_EventNativeMethodBind (jvmtiEnv *jvmti_env,
 void JNICALL jrst_EventObjectFree (jvmtiEnv *jvmti_env,
                                    jlong tag)
 {
+  trace_event_object_free(tag);
 }
 
 void JNICALL jrst_EventResourceExhausted (jvmtiEnv *jvmti_env,

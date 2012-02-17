@@ -248,5 +248,20 @@ void jrst_get_thread_name(jvmtiEnv * jvmtiLocate,
 void trace_flush_buffers (void);
 void trace_initialize(jvmtiEnv * jvmtiLocate, jthread thread, char *name);
 void trace_finalize(jvmtiEnv * jvmtiLocate, jthread thread);
+void trace_event_object_free(jlong tag);
+void trace_event_gc_start(void);
+void trace_event_gc_finish(void);
+void trace_event_monitor_contended_enter(jvmtiEnv * jvmtiLocate,
+                                         jthread thread,
+                                         int object);
+void trace_event_monitor_contended_entered(jvmtiEnv * jvmtiLocate,
+                                           jthread thread,
+                                           int object);
+void trace_event_monitor_wait(jvmtiEnv * jvmtiLocate,
+                              jthread thread,
+                              int object);
+void trace_event_monitor_waited(jvmtiEnv * jvmtiLocate,
+                                jthread thread,
+                                int object);
 
 #endif
