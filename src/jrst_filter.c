@@ -6,6 +6,7 @@
 
 static struct hsearch_data classes;
 static struct hsearch_data methods;
+static int hash_initialized = 0;
 
 typedef enum {
   ParseStart,
@@ -27,6 +28,7 @@ void jrst_filter_init (void)
 
   hcreate_r (1000, &classes);
   hcreate_r (1000, &methods);
+  hash_initialized = 1;
 
   char p1[JRST_MAX_STRING];
   ParseState state = ParseStart;
@@ -80,6 +82,8 @@ void jrst_filter_finalize (void)
 
 int jrst_filtered (char *classname, char *methodname)
 {
+  if (!hash_initialized) return 0;
+
   int ret = 1;
 
   ENTRY e, *ep = NULL;
