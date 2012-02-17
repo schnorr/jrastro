@@ -146,27 +146,11 @@ JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM *jvm,
   (*GET_JVMTI())->CreateRawMonitor(GET_JVMTI(),
                                    "tag",
                                    &(jrst->monitor_tag));
-
-  /* hash_initialize(&h_options, hash_value_string, hash_copy_string, */
-  /*                 hash_key_cmp_string, hash_destroy_string_list); */
-  /* hash_initialize(&h_class, hash_value_string, hash_copy_string_data, */
-  /*                 hash_key_cmp_string, hash_destroy_string_data); */
-
-
-  /* /\*Le nomes dos arquivos "opcoes" *\/ */
-  /* jrst_read_names_options(options); */
-
-  /* /\*Funcao que abilita os methodos a serem rastreados *\/ */
-  /* jrst_read_class_methods_enable(); */
-
   return JNI_OK;
 
 }
 
 JNIEXPORT void JNICALL Agent_OnUnload(JavaVM * vm)
 {
-  /* hash_finalize(&h_options); */
-  /* hash_finalize(&h_class); */
-
   trace_finalize_buffers();
 }
