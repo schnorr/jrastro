@@ -353,6 +353,8 @@ void paje_hierarchy(void)
   pajeDefineContainerType ("ROOT", "0", "ROOT");
   pajeDefineContainerType("THREAD", "ROOT", "THREAD");
   pajeDefineStateType("STATE", "THREAD", "STATE");
+  pajeDefineContainerType("GC", "ROOT", "GC");
+  pajeDefineStateType("GCSTATE", "GC", "GCSTATE");
   printf ("#\n"
           "# Let the timestamped events describe behavior\n"
           "#\n");

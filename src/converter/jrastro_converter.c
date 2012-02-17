@@ -189,6 +189,26 @@ int main (int argc, char **argv)
     case JRST_METHOD_EXIT_EXCEPTION:
     case JRST_METHOD_LOAD:
     case JRST_CLASS_LOAD:
+      break;
+    case JRST_GC_START:
+      {
+        char gccontainer[100];
+        snprintf (gccontainer, 100, "gc");
+        static int create_gc = 1;
+        if (create_gc) {
+          pajeCreateContainer (timestamp, gccontainer, "GC", "root", gccontainer);
+          create_gc = 0;
+        }
+        pajePushState (timestamp, gccontainer, "GCSTATE", "active");
+      }
+      break;
+    case JRST_GC_FINISH:
+      {
+        char gccontainer[100];
+        snprintf (gccontainer, 100, "gc");
+        pajePopState (timestamp, gccontainer, "GCSTATE");
+      }
+      break;
     default:
       break;
     }
