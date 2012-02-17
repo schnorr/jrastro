@@ -328,75 +328,119 @@ void JNICALL jrst_EventVMInit (jvmtiEnv *jvmti_env,
 {
   MONITOR_ENTER(jrst->monitor);
 
-  /* /\*Funcao que abilita as opcoes dos eventos *\/ */
-  /* jrst_read_events_enable(jvmtiLocate); */
-
-  /* jvmtiError error; */
-  /* jint class_count_ptr; */
-  /* jclass *classes_ptr; */
-  /* jvmtiClassDefinition definitions[300]; */
-  /* hash_data_t *class = NULL; */
-  /* int count = 0; */
-  /* int i; */
-
-  /* error = */
-  /*     (*jvmtiLocate)->GetLoadedClasses(jvmtiLocate, &class_count_ptr, */
-  /*                                      &classes_ptr); */
-  /* jrst_check_error(jvmtiLocate, error, "Cannot Get Loaded Classes"); */
-
-  /* for (i = 0; i < class_count_ptr; i++) { */
-
-  /*   char *signature_ptr; */
-  /*   char *generic_ptr; */
-  /*   int size = 0; */
-  /*   char *tmp; */
-
-  /*   error = */
-  /*       (*jvmtiLocate)->GetClassSignature(jvmtiLocate, classes_ptr[i], */
-  /*                                         &signature_ptr, &generic_ptr); */
-  /*   jrst_check_error(jvmtiLocate, error, "Cannot Get Class Signature"); */
-
-  /*   /\*Tirar da signature o caracter 'L' *\/ */
-  /*   tmp = (char *) signature_ptr + 1; */
-  /*   /\* -1 Pois comeca em 0 o vetor *\/ */
-  /*   size = strlen(tmp) - 1; */
-  /*   /\*Tira da signature o caracter ';' *\/ */
-  /*   tmp[size] = '\0'; */
-
-  /*   class = hash_locate(&h_class, (hash_key_t) tmp); */
-
-  /*   if (class != NULL) { */
-  /*     definitions[count] = **(jvmtiClassDefinition **) class; */
-  /*     definitions[count].klass = classes_ptr[i]; */
-  /*     count++; */
-
-  /*   } */
-
-  /*   error = */
-  /*       (*jvmtiLocate)->Deallocate(jvmtiLocate, */
-  /*                                  (unsigned char *) signature_ptr); */
-  /*   jrst_check_error(jvmtiLocate, error, "Cannot deallocate memory"); */
-  /*   error = */
-  /*       (*jvmtiLocate)->Deallocate(jvmtiLocate, */
-  /*                                  (unsigned char *) generic_ptr); */
-  /*   jrst_check_error(jvmtiLocate, error, "Cannot deallocate memory"); */
-  /* } */
-
-  /* initialized = true; */
-
-  /* error = (*jvmtiLocate)->RedefineClasses(jvmtiLocate, count, definitions); */
-  /* jrst_check_error(jvmtiLocate, error, "Redefine Classes"); */
-
-  /* error = */
-  /*     (*jvmtiLocate)->Deallocate(jvmtiLocate, */
-  /*                                (unsigned char *) classes_ptr); */
-  /* jrst_check_error(jvmtiLocate, error, "Cannot deallocate memory"); */
-
-
-  /* if (traces) { */
-  /*   jrst_threads(jvmtiLocate); */
-  /* } */
-
+  //enabling notifications
+  (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(),
+                                           JVMTI_ENABLE,
+                                           JVMTI_EVENT_THREAD_START,
+                                           NULL);
+  (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(),
+                                           JVMTI_ENABLE,
+                                           JVMTI_EVENT_THREAD_END,
+                                           NULL);
+  /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
+  /*                                          JVMTI_ENABLE, */
+  /*                                          JVMTI_EVENT_CLASS_LOAD, */
+  /*                                          NULL); */
+  /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
+  /*                                          JVMTI_ENABLE, */
+  /*                                          JVMTI_EVENT_CLASS_PREPARE, */
+  /*                                          NULL); */
+  /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
+  /*                                          JVMTI_ENABLE, */
+  /*                                          JVMTI_EVENT_VM_START, */
+  /*                                          NULL); */
+  /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
+  /*                                          JVMTI_ENABLE, */
+  /*                                          JVMTI_EVENT_EXCEPTION, */
+  /*                                          NULL); */
+  /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
+  /*                                          JVMTI_ENABLE, */
+  /*                                          JVMTI_EVENT_EXCEPTION_CATCH, */
+  /*                                          NULL); */
+  /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
+  /*                                          JVMTI_ENABLE, */
+  /*                                          JVMTI_EVENT_SINGLE_STEP, */
+  /*                                          NULL); */
+  /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
+  /*                                          JVMTI_ENABLE, */
+  /*                                          JVMTI_EVENT_FRAME_POP, */
+  /*                                          NULL); */
+  /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
+  /*                                          JVMTI_ENABLE, */
+  /*                                          JVMTI_EVENT_BREAKPOINT, */
+  /*                                          NULL); */
+  /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
+  /*                                          JVMTI_ENABLE, */
+  /*                                          JVMTI_EVENT_FIELD_ACCESS, */
+  /*                                          NULL); */
+  /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
+  /*                                          JVMTI_ENABLE, */
+  /*                                          JVMTI_EVENT_FIELD_MODIFICATION, */
+  /*                                          NULL); */
+  (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(),
+                                           JVMTI_ENABLE,
+                                           JVMTI_EVENT_METHOD_ENTRY,
+                                           NULL);
+  (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(),
+                                           JVMTI_ENABLE,
+                                           JVMTI_EVENT_METHOD_EXIT,
+                                           NULL);
+  /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
+  /*                                          JVMTI_ENABLE, */
+  /*                                          JVMTI_EVENT_NATIVE_METHOD_BIND, */
+  /*                                          NULL); */
+  /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
+  /*                                          JVMTI_ENABLE, */
+  /*                                          JVMTI_EVENT_COMPILED_METHOD_LOAD, */
+  /*                                          NULL); */
+  /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
+  /*                                          JVMTI_ENABLE, */
+  /*                                          JVMTI_EVENT_COMPILED_METHOD_UNLOAD, */
+  /*                                          NULL); */
+  /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
+  /*                                          JVMTI_ENABLE, */
+  /*                                          JVMTI_EVENT_DYNAMIC_CODE_GENERATED, */
+  /*                                          NULL); */
+  /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
+  /*                                          JVMTI_ENABLE, */
+  /*                                          JVMTI_EVENT_DATA_DUMP_REQUEST, */
+  /*                                          NULL); */
+  /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
+  /*                                          JVMTI_ENABLE, */
+  /*                                          JVMTI_EVENT_MONITOR_WAIT, */
+  /*                                          NULL); */
+  /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
+  /*                                          JVMTI_ENABLE, */
+  /*                                          JVMTI_EVENT_MONITOR_WAITED, */
+  /*                                          NULL); */
+  /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
+  /*                                          JVMTI_ENABLE, */
+  /*                                          JVMTI_EVENT_MONITOR_CONTENDED_ENTER, */
+  /*                                          NULL); */
+  /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
+  /*                                          JVMTI_ENABLE, */
+  /*                                          JVMTI_EVENT_MONITOR_CONTENDED_ENTERED, */
+  /*                                          NULL); */
+  /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
+  /*                                          JVMTI_ENABLE, */
+  /*                                          JVMTI_EVENT_RESOURCE_EXHAUSTED, */
+  /*                                          NULL); */
+  /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
+  /*                                          JVMTI_ENABLE, */
+  /*                                          JVMTI_EVENT_GARBAGE_COLLECTION_START, */
+  /*                                          NULL); */
+  /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
+  /*                                          JVMTI_ENABLE, */
+  /*                                          JVMTI_EVENT_GARBAGE_COLLECTION_FINISH, */
+  /*                                          NULL); */
+  /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
+  /*                                          JVMTI_ENABLE, */
+  /*                                          JVMTI_EVENT_OBJECT_FREE, */
+  /*                                          NULL); */
+  /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
+  /*                                          JVMTI_ENABLE, */
+  /*                                          JVMTI_EVENT_VM_OBJECT_ALLOC, */
+  /*                                          NULL); */
 
   MONITOR_EXIT(jrst->monitor);
 }
