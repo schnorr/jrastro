@@ -34,6 +34,11 @@ void rst_event_lis_ptr(rst_buffer_t *ptr, u_int16_t type, u_int64_t l0, u_int32_
 void rst_event_lis_f_ (int16_t *type, int64_t* l0, int32_t* i0, const char* s0);
 #define rst_event_lis(type, l0, i0, s0) rst_event_lis_ptr(RST_PTR, type, l0, i0, s0)
 
+/* Rastro function prototype for 'isii' */
+void rst_event_isii_ptr(rst_buffer_t *ptr, u_int16_t type, u_int32_t i0, const char* s0, u_int32_t i1, u_int32_t i2);
+void rst_event_isii_f_ (int16_t *type, int32_t* i0, const char* s0, int32_t* i1, int32_t* i2);
+#define rst_event_isii(type, i0, s0, i1, i2) rst_event_isii_ptr(RST_PTR, type, i0, s0, i1, i2)
+
 void rst_init_f_(int64_t *id1, int64_t *id2);
 void rst_finalize_f_ (void);
 
