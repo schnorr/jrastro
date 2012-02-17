@@ -1,7 +1,11 @@
 #ifndef __JRASTRO_H_
 #define __JRASTRO_H_
 
-#define JRST_FINALIZE 0
-
+#define JRST_INITIALIZE 0
+#define JRST_FINALIZE 1
+#define JRST_MONITOR_ENTER 2
+#define JRST_MONITOR_ENTERED 3
+#define JRST_MONITOR_WAIT 4
+#define JRST_MONITOR_WAITED 5
 
 #endif
