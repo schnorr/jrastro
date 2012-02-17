@@ -1,8 +1,12 @@
 #ifndef __JRASTRO_H_
 #define __JRASTRO_H_
+#include <rastro.h>
+#include <jrastro_config.h>
 
-#define JRST_INITIALIZE 0
-#define JRST_FINALIZE 1
+#define JRST_INPUT_SIZE 100
+
+#define JRST_THREAD_START 0
+#define JRST_THREAD_END 1
 #define JRST_MONITOR_ENTER 2
 #define JRST_MONITOR_ENTERED 3
 #define JRST_MONITOR_WAIT 4
