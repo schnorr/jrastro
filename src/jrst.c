@@ -31,7 +31,7 @@ jrst_agent *jrst = NULL;
 /*Seta as funcoes para retorno dos eventos*/
 
 /*Identificador da thread main == Identificador da JVM*/
-unsigned long long jrst_jvmid;
+unsigned long long jrst_jvmid = 0;
 
 /*Nome do arquivo com as opcoes dos eventos a serem selecionados*/
 //char eventsOptionName[MAX_NAME_OPTIONS];
@@ -149,23 +149,21 @@ JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM *jvm,
                                     &cb,
                                     sizeof(jvmtiEventCallbacks));
 
-  //set notifications jrastro uses to control the tracing
-  (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(),
-                                           JVMTI_ENABLE,
-                                           JVMTI_EVENT_CLASS_FILE_LOAD_HOOK,
-                                           (jthread) NULL);
+  //set notifications jrastro uses to initialize the tracing
+  //other notifications are set on VM_INIT callback
   (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(),
                                            JVMTI_ENABLE,
                                            JVMTI_EVENT_VM_INIT,
-                                           (jthread) NULL);
+                                           NULL);
   (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(),
                                            JVMTI_ENABLE,
                                            JVMTI_EVENT_VM_DEATH,
-                                           (jthread) NULL);
+                                           NULL);
   (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(),
                                            JVMTI_ENABLE,
-                                           JVMTI_EVENT_VM_START,
-                                           (jthread) NULL);
+                                           JVMTI_EVENT_CLASS_FILE_LOAD_HOOK,
+                                           NULL);
+
 
   //create monitors to protect some parts of tracing
   (*GET_JVMTI())->CreateRawMonitor(GET_JVMTI(),
