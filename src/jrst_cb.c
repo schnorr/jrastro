@@ -328,15 +328,71 @@ void JNICALL jrst_EventVMInit (jvmtiEnv *jvmti_env,
 {
   MONITOR_ENTER(jrst->monitor);
 
-  //enabling notifications
-  (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(),
-                                           JVMTI_ENABLE,
-                                           JVMTI_EVENT_THREAD_START,
-                                           NULL);
-  (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(),
-                                           JVMTI_ENABLE,
-                                           JVMTI_EVENT_THREAD_END,
-                                           NULL);
+  /* Thread tracing */
+  if (jrst->thread_tracing){
+    (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(),
+                                             JVMTI_ENABLE,
+                                             JVMTI_EVENT_THREAD_START,
+                                             NULL);
+    (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(),
+                                             JVMTI_ENABLE,
+                                             JVMTI_EVENT_THREAD_END,
+                                             NULL);
+  }
+
+  /* Method tracing */
+  if (jrst->thread_tracing && jrst->method_tracing){
+    (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(),
+                                             JVMTI_ENABLE,
+                                             JVMTI_EVENT_METHOD_ENTRY,
+                                             NULL);
+    (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(),
+                                             JVMTI_ENABLE,
+                                             JVMTI_EVENT_METHOD_EXIT,
+                                             NULL);
+  }
+
+  /* Monitor tracing */
+  if (jrst->monitor_tracing){
+    (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(),
+                                             JVMTI_ENABLE,
+                                             JVMTI_EVENT_MONITOR_WAIT,
+                                             NULL);
+    (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(),
+                                             JVMTI_ENABLE,
+                                             JVMTI_EVENT_MONITOR_WAITED,
+                                             NULL);
+    (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(),
+                                             JVMTI_ENABLE,
+                                             JVMTI_EVENT_MONITOR_CONTENDED_ENTER,
+                                             NULL);
+    (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(),
+                                             JVMTI_ENABLE,
+                                             JVMTI_EVENT_MONITOR_CONTENDED_ENTERED,
+                                             NULL);
+  }
+
+  /* Memory allocation tracing */
+  if (jrst->gc_tracing){
+    (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(),
+                                             JVMTI_ENABLE,
+                                             JVMTI_EVENT_GARBAGE_COLLECTION_START,
+                                             NULL);
+    (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(),
+                                             JVMTI_ENABLE,
+                                             JVMTI_EVENT_GARBAGE_COLLECTION_FINISH,
+                                             NULL);
+    (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(),
+                                             JVMTI_ENABLE,
+                                             JVMTI_EVENT_OBJECT_FREE,
+                                             NULL);
+    (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(),
+                                             JVMTI_ENABLE,
+                                             JVMTI_EVENT_VM_OBJECT_ALLOC,
+                                             NULL);
+  }
+
+  /* Other notifications */
   /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
   /*                                          JVMTI_ENABLE, */
   /*                                          JVMTI_EVENT_CLASS_LOAD, */
@@ -377,14 +433,6 @@ void JNICALL jrst_EventVMInit (jvmtiEnv *jvmti_env,
   /*                                          JVMTI_ENABLE, */
   /*                                          JVMTI_EVENT_FIELD_MODIFICATION, */
   /*                                          NULL); */
-  (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(),
-                                           JVMTI_ENABLE,
-                                           JVMTI_EVENT_METHOD_ENTRY,
-                                           NULL);
-  (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(),
-                                           JVMTI_ENABLE,
-                                           JVMTI_EVENT_METHOD_EXIT,
-                                           NULL);
   /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
   /*                                          JVMTI_ENABLE, */
   /*                                          JVMTI_EVENT_NATIVE_METHOD_BIND, */
@@ -407,39 +455,7 @@ void JNICALL jrst_EventVMInit (jvmtiEnv *jvmti_env,
   /*                                          NULL); */
   /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
   /*                                          JVMTI_ENABLE, */
-  /*                                          JVMTI_EVENT_MONITOR_WAIT, */
-  /*                                          NULL); */
-  /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
-  /*                                          JVMTI_ENABLE, */
-  /*                                          JVMTI_EVENT_MONITOR_WAITED, */
-  /*                                          NULL); */
-  /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
-  /*                                          JVMTI_ENABLE, */
-  /*                                          JVMTI_EVENT_MONITOR_CONTENDED_ENTER, */
-  /*                                          NULL); */
-  /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
-  /*                                          JVMTI_ENABLE, */
-  /*                                          JVMTI_EVENT_MONITOR_CONTENDED_ENTERED, */
-  /*                                          NULL); */
-  /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
-  /*                                          JVMTI_ENABLE, */
   /*                                          JVMTI_EVENT_RESOURCE_EXHAUSTED, */
-  /*                                          NULL); */
-  /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
-  /*                                          JVMTI_ENABLE, */
-  /*                                          JVMTI_EVENT_GARBAGE_COLLECTION_START, */
-  /*                                          NULL); */
-  /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
-  /*                                          JVMTI_ENABLE, */
-  /*                                          JVMTI_EVENT_GARBAGE_COLLECTION_FINISH, */
-  /*                                          NULL); */
-  /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
-  /*                                          JVMTI_ENABLE, */
-  /*                                          JVMTI_EVENT_OBJECT_FREE, */
-  /*                                          NULL); */
-  /* (*GET_JVMTI())->SetEventNotificationMode(GET_JVMTI(), */
-  /*                                          JVMTI_ENABLE, */
-  /*                                          JVMTI_EVENT_VM_OBJECT_ALLOC, */
   /*                                          NULL); */
 
   MONITOR_EXIT(jrst->monitor);
