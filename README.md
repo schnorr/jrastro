@@ -44,6 +44,25 @@ may generate this list of files:
     rastro-1-0.rst
     rastro-2-0.rst
 
+Filtering classes and methods
+-----------------------------
+
+The user can define the environment variable `JRST_FILTER` with the
+name of a text file that will be used as a filter of method tracing.
+This file needs to be in the following format to be accepted:
+
+    $ export JRST_FILTER=filter
+    $ cat filter
+       C SimpleThread
+       M sleepForThreeSeconds
+       M doTheJob
+
+Only the classes (and all their methods) and the methods that appear
+in this file will be traced. Multiple classes and methods are
+accepted. If the file is not provided through the `JRST_FILTER`
+environment variable, __all__ classes and methods of the JVM will be
+traced, and you will have huge trace files.
+
 jrastro_converter
 -----------------
 
