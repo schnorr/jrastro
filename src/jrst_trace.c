@@ -11,6 +11,7 @@ void trace_flush_buffers (void)
   int i;
   for (i = 0; i < used; i++){
     rst_flush (buffers[i]);
+    rst_finalize_ptr (buffers[i]);
   }
   free (buffers);
   size = used = 0;
