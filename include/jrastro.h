@@ -34,6 +34,8 @@
 #define JRST_METHOD_EXIT_EXCEPTION 9
 #define JRST_METHOD_LOAD 10
 #define JRST_CLASS_LOAD 11
+#define JRST_GC_START 12
+#define JRST_GC_FINISH 13
 
 
 #endif

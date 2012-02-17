@@ -127,14 +127,14 @@ void trace_event_gc_start()
                  (u_int64_t) jrst_jvmid,
                  (u_int64_t) THE_MONITOR_THREAD);
   }
-  rst_event_ptr(ptr_monitor, JVMTI_EVENT_GARBAGE_COLLECTION_START);
+  rst_event_ptr(ptr_monitor, JRST_GC_START);
   MONITOR_EXIT(jrst->monitor_buffer);
 }
 
 void trace_event_gc_finish()
 {
   MONITOR_ENTER(jrst->monitor_buffer);
-  rst_event_ptr(ptr_monitor, JVMTI_EVENT_GARBAGE_COLLECTION_FINISH);
+  rst_event_ptr(ptr_monitor, JRST_GC_FINISH);
   MONITOR_EXIT(jrst->monitor_buffer);
 }
 
