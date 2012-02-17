@@ -5,24 +5,30 @@ static rst_buffer_t **buffers = NULL;
 static int size = 0;
 static int used = 0;
 
-//the monitor buffer
+//the loader and monitor buffer
+static rst_buffer_t *ptr_loader = NULL;
 static rst_buffer_t *ptr_monitor = NULL;
 
 //this should be called only in VMDeath, because of the free below
-void trace_flush_buffers (void)
+void trace_finalize_buffers (void)
 {
+  if (ptr_monitor != NULL){
+    rst_finalize_ptr (ptr_monitor);
+  }
+
+  if (ptr_loader != NULL){
+    rst_finalize_ptr (ptr_loader);
+  }
+
   int i;
   for (i = 0; i < used; i++){
-    rst_flush (buffers[i]);
-    rst_finalize_ptr (buffers[i]);
+    if (buffers[i] != NULL){
+      rst_event_ptr(buffers[i], JRST_THREAD_END);
+      rst_finalize_ptr(buffers[i]);
+    }
   }
   free (buffers);
   size = used = 0;
-
-  if (ptr_monitor != NULL){
-    rst_flush (ptr_monitor);
-    rst_finalize_ptr (ptr_monitor);
-  }
 }
 
 void trace_initialize(jvmtiEnv * jvmtiLocate, jthread thread, char *name)
