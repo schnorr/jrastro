@@ -1,3 +1,20 @@
+/*
+    This file is part of jrastro.
+
+    jrastro is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the
+    Free Software Foundation; either version 2 of the License, or (at your
+    option) any later version.
+
+    jrastro is distributed in the hope that it will be useful, but WITHOUT ANY
+    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+    FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+    for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with jrastro; if not, write to the Free Software Foundation, Inc.,
+	51 Franklin Street, Fifth Floor, Boston, MA 02111 USA.
+*/
 #include "jrst_private.h"
 
 //list of buffers
@@ -9,7 +26,7 @@ static int used = 0;
 static rst_buffer_t *ptr_loader = NULL;
 static rst_buffer_t *ptr_monitor = NULL;
 
-//this should be called only in VMDeath, because of the free below
+//this should be called only during agent depth (UnLoad)
 void trace_finalize_buffers (void)
 {
   if (ptr_monitor != NULL){
