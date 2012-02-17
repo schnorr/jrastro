@@ -15,6 +15,7 @@ SET(JRASTRO_SRC
   src/jrst.c
   src/jrst_cb.c
   src/jrst_trace.c
+  src/jrst_functions.c
 )
 
 INCLUDE_DIRECTORIES(${jrastro_SOURCE_DIR}/include/)
