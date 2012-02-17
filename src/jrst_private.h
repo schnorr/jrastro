@@ -8,6 +8,7 @@
 #include <jvmti.h>
 #include <rastro.h>
 #include <jrastro.h>
+#include "jrst_functions.h"
 
 typedef struct {
   jvmtiEnv *jvmti;
