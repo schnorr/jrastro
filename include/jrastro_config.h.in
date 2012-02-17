@@ -1,0 +1,7 @@
+#ifndef _JRASTRO_CONFIG_H
+#define _JRASTRO_CONFIG_H
+
+#cmakedefine GITVERSION "@GITVERSION@"
+#cmakedefine GITDATE "@GITDATE@"
+
+#endif
