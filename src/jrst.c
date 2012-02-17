@@ -27,39 +27,7 @@
 #include "jrst_private.h"
 
 jrst_agent *jrst = NULL;
-/*Identifica as capacidades da JVM*/
-/*Seta as funcoes para retorno dos eventos*/
-
-/*Identificador da thread main == Identificador da JVM*/
 unsigned long long jrst_jvmid = 0;
-
-/*Nome do arquivo com as opcoes dos eventos a serem selecionados*/
-//char eventsOptionName[MAX_NAME_OPTIONS];
-/*Nome do arquivo com as opcoes das classes e metodos a serem selecionados*/
-//char methodsOptionName[MAX_NAME_OPTIONS];
-
-/*Variavel para indicar se sera rastreados os eventos monitorados*/
-int traces = 1;
-/*Variavel para setar se todos as classes e metodos serao rastreados*/
-int tracesAll = 0;
-/*Variavel para indicar se os metodos serao rastreados*/
-int methodsTrace = 0;
-/*Variavel para indicar se a alocacao e liberacao de memoria sera rastreado*/
-int memoryTrace = 0;
-
-/*Indica se ja ocorreu a inicializacao da JVM*/
-int initialized = 0;
-
-/*Hash com as classes a serem redefinidas*/
-/* hash_t h_class; */
-/*Hash com as opcoes, classes e metodos*/
-/* hash_t h_options; */
-
-/*Buffers*/
-/* rst_buffer_t *ptr_loader = NULL; */
-/* rst_buffer_t *ptr_monitor = NULL; */
-/* rst_buffer_t *ptr_new_array = NULL; */
-
 
 JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM *jvm,
                                     char *options,
