@@ -24,6 +24,7 @@ SET(JRASTRO_LIBRARY_SRC
   src/jrst_cb.c
   src/jrst_trace.c
   src/jrst_functions.c
+  src/jrst_filter.c
 )
 
 SET(JRASTRO_SRC

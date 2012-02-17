@@ -41,6 +41,9 @@ JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM *jvm,
   if (getenv ("JRST_MONITOR_TRACING")) jrst->monitor_tracing = 1;
   if (getenv ("JRST_GC_TRACING")) jrst->gc_tracing = 1;
 
+  //init filtering
+  jrst_filter_init();
+
   //get the jvmti reference, save it in the global agent
   ret = (*jvm)->GetEnv(jvm, (void*)(&jrst->jvmti), JVMTI_VERSION_1_0);
   if (ret != JNI_OK || jrst->jvmti == NULL) {
@@ -153,4 +156,5 @@ JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM *jvm,
 JNIEXPORT void JNICALL Agent_OnUnload(JavaVM * vm)
 {
   trace_finalize_buffers();
+  jrst_filter_finalize();
 }

@@ -211,15 +211,36 @@ void JNICALL jrst_EventMethodEntry (jvmtiEnv *jvmti_env,
                                     jmethodID method)
 {
   char *name, *signature, *generic;
-  jvmtiError error = (*GET_JVMTI())->GetMethodName(GET_JVMTI(),
-                                                   method,
-                                                   &name,
-                                                   &signature,
-                                                   &generic);
-  trace_event_method_entry (thread, name);
+  (*GET_JVMTI())->GetMethodName(GET_JVMTI(),
+                                method,
+                                &name,
+                                &signature,
+                                &generic);
+  jclass class;
+  (*GET_JVMTI())->GetMethodDeclaringClass(GET_JVMTI(),
+                                          method,
+                                          &class);
+  char *class_signature, *class_generic;
+  (*GET_JVMTI())->GetClassSignature(GET_JVMTI(),
+                                    class,
+                                    &class_signature,
+                                    &class_generic);
+  char *class_clean = class_signature+1;
+  int i;
+  for (i = 0; class_clean[i] != '\0'; i++){
+    if (class_clean[i] == ';'){
+      class_clean[i] = '\0';
+      break;
+    }
+  }
+  if (jrst_filtered(class_clean, name) == 0){
+    trace_event_method_entry (thread, name);
+  }
   (*GET_JVMTI())->Deallocate (GET_JVMTI(), (unsigned char*)name);
   (*GET_JVMTI())->Deallocate (GET_JVMTI(), (unsigned char*)signature);
   (*GET_JVMTI())->Deallocate (GET_JVMTI(), (unsigned char*)generic);
+  (*GET_JVMTI())->Deallocate (GET_JVMTI(), (unsigned char*)class_signature);
+  (*GET_JVMTI())->Deallocate (GET_JVMTI(), (unsigned char*)class_generic);
 }
 
 void JNICALL jrst_EventMethodExit (jvmtiEnv *jvmti_env,
@@ -235,7 +256,26 @@ void JNICALL jrst_EventMethodExit (jvmtiEnv *jvmti_env,
                                                    &name,
                                                    &signature,
                                                    &generic);
-  trace_event_method_exit (thread, name);
+  jclass class;
+  (*GET_JVMTI())->GetMethodDeclaringClass(GET_JVMTI(),
+                                          method,
+                                          &class);
+  char *class_signature, *class_generic;
+  (*GET_JVMTI())->GetClassSignature(GET_JVMTI(),
+                                    class,
+                                    &class_signature,
+                                    &class_generic);
+  char *class_clean = class_signature+1;
+  int i;
+  for (i = 0; class_clean[i] != '\0'; i++){
+    if (class_clean[i] == ';'){
+      class_clean[i] = '\0';
+      break;
+    }
+  }
+  if (jrst_filtered(class_clean, name) == 0){
+    trace_event_method_exit (thread, name);
+  }
   (*GET_JVMTI())->Deallocate (GET_JVMTI(), (unsigned char*)name);
   (*GET_JVMTI())->Deallocate (GET_JVMTI(), (unsigned char*)signature);
   (*GET_JVMTI())->Deallocate (GET_JVMTI(), (unsigned char*)generic);

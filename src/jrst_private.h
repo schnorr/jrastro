@@ -288,5 +288,9 @@ void trace_event_method_load(int method, char *name, unsigned access_flags,
                              int klass);
 void trace_event_class_load(int klass, char *name);
 
+//from jrst_filter.c
+void jrst_filter_init (void);
+void jrst_filter_finalize (void);
+int jrst_filtered (char *classname, char *methodname);
 
 #endif
