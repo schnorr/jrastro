@@ -1,32 +1,5 @@
 #include "jrst_private.h"
 
-void JNICALL jrst_event_ClassFileLoadHook(jvmtiEnv * jvmtiLocate,
-                                          JNIEnv * jniEnv,
-                                          jclass class_being_redefined,
-                                          jobject loader, const char *name,
-                                          jobject protection_domain,
-                                          jint class_data_len,
-                                          const unsigned char *class_data,
-                                          jint * new_class_data_len,
-                                          unsigned char **new_class_data)
-{
-
-}
-
-
-
-//////////////////////////////////////////////////////////////////////////////
-/*--------------------------------------------------
-* void JNICALL jrst_event_VMDeath(jvmtiEnv *jvmtiLocate, JNIEnv *jniEnv)
-* {
-* 	jrst_enter_critical_section(jvmtiLocate);
-* 
-* 	printf("VM Death event\n");
-* 	
-* 	jrst_exit_critical_section(jvmtiLocate);
-* }
-*--------------------------------------------------*/
-
 void JNICALL jrst_EventBreakpoint
     (jvmtiEnv *jvmti_env,
      JNIEnv* jni_env,
@@ -36,17 +9,16 @@ void JNICALL jrst_EventBreakpoint
 {
 }
 
-void JNICALL jrst_EventClassFileLoadHook
-    (jvmtiEnv *jvmti_env,
-     JNIEnv* jni_env,
-     jclass class_being_redefined,
-     jobject loader,
-     const char* name,
-     jobject protection_domain,
-     jint class_data_len,
-     const unsigned char* class_data,
-     jint* new_class_data_len,
-     unsigned char** new_class_data)
+void JNICALL jrst_EventClassFileLoadHook (jvmtiEnv *jvmti_env,
+                                          JNIEnv* jni_env,
+                                          jclass class_being_redefined,
+                                          jobject loader,
+                                          const char* name,
+                                          jobject protection_domain,
+                                          jint class_data_len,
+                                          const unsigned char* class_data,
+                                          jint* new_class_data_len,
+                                          unsigned char** new_class_data)
 {
   /* jrst_enter_critical_section(jvmtiLocate, gagent->monitor); */
 
@@ -113,107 +85,96 @@ void JNICALL jrst_EventClassFileLoadHook
   /* jrst_exit_critical_section(jvmtiLocate, gagent->monitor); */
 }
 
-void JNICALL jrst_EventClassLoad
-    (jvmtiEnv *jvmti_env,
-     JNIEnv* jni_env,
-     jthread thread,
-     jclass klass)
+void JNICALL jrst_EventClassLoad (jvmtiEnv *jvmti_env,
+                                  JNIEnv* jni_env,
+                                  jthread thread,
+                                  jclass klass)
 {
 }
 
-void JNICALL jrst_EventClassPrepare
-    (jvmtiEnv *jvmti_env,
-     JNIEnv* jni_env,
-     jthread thread,
-     jclass klass)
+void JNICALL jrst_EventClassPrepare (jvmtiEnv *jvmti_env,
+                                     JNIEnv* jni_env,
+                                     jthread thread,
+                                     jclass klass)
 {
 }
 
-void JNICALL jrst_EventCompiledMethodLoad
-    (jvmtiEnv *jvmti_env,
-     jmethodID method,
-     jint code_size,
-     const void* code_addr,
-     jint map_length,
-     const jvmtiAddrLocationMap* map,
-     const void* compile_info)
+void JNICALL jrst_EventCompiledMethodLoad (jvmtiEnv *jvmti_env,
+                                           jmethodID method,
+                                           jint code_size,
+                                           const void* code_addr,
+                                           jint map_length,
+                                           const jvmtiAddrLocationMap* map,
+                                           const void* compile_info)
 {
 }
 
-void JNICALL jrst_EventCompiledMethodUnload
-    (jvmtiEnv *jvmti_env,
-     jmethodID method,
-     const void* code_addr)
+void JNICALL jrst_EventCompiledMethodUnload (jvmtiEnv *jvmti_env,
+                                             jmethodID method,
+                                             const void* code_addr)
 {
 }
 
-void JNICALL jrst_EventDataDumpRequest
-    (jvmtiEnv *jvmti_env)
+void JNICALL jrst_EventDataDumpRequest (jvmtiEnv *jvmti_env)
 {
 }
 
-void JNICALL jrst_EventDynamicCodeGenerated
-    (jvmtiEnv *jvmti_env,
-     const char* name,
-     const void* address,
-     jint length)
+void JNICALL jrst_EventDynamicCodeGenerated (jvmtiEnv *jvmti_env,
+                                             const char* name,
+                                             const void* address,
+                                             jint length)
 {
 }
 
-void JNICALL jrst_EventException
-    (jvmtiEnv *jvmti_env,
-     JNIEnv* jni_env,
-     jthread thread,
-     jmethodID method,
-     jlocation location,
-     jobject exception,
-     jmethodID catch_method,
-     jlocation catch_location)
+void JNICALL jrst_EventException (jvmtiEnv *jvmti_env,
+                                  JNIEnv* jni_env,
+                                  jthread thread,
+                                  jmethodID method,
+                                  jlocation location,
+                                  jobject exception,
+                                  jmethodID catch_method,
+                                  jlocation catch_location)
 {
 }
 
-void JNICALL jrst_EventExceptionCatch
-    (jvmtiEnv *jvmti_env,
-     JNIEnv* jni_env,
-     jthread thread,
-     jmethodID method,
-     jlocation location,
-     jobject exception)
+void JNICALL jrst_EventExceptionCatch (jvmtiEnv *jvmti_env,
+                                       JNIEnv* jni_env,
+                                       jthread thread,
+                                       jmethodID method,
+                                       jlocation location,
+                                       jobject exception)
 {
 }
 
-void JNICALL jrst_EventFieldAccess
-    (jvmtiEnv *jvmti_env,
-     JNIEnv* jni_env,
-     jthread thread,
-     jmethodID method,
-     jlocation location,
-     jclass field_klass,
-     jobject object,
-     jfieldID field)
+void JNICALL jrst_EventFieldAccess (jvmtiEnv *jvmti_env,
+                                    JNIEnv* jni_env,
+                                    jthread thread,
+                                    jmethodID method,
+                                    jlocation location,
+                                    jclass field_klass,
+                                    jobject object,
+                                    jfieldID field)
 {
 }
 
-void JNICALL jrst_EventFieldModification
-    (jvmtiEnv *jvmti_env,
-     JNIEnv* jni_env,
-     jthread thread,
-     jmethodID method,
-     jlocation location,
-     jclass field_klass,
-     jobject object,
-     jfieldID field,
-     char signature_type,
-     jvalue new_value)
+void JNICALL jrst_EventFieldModification (jvmtiEnv *jvmti_env,
+                                          JNIEnv* jni_env,
+                                          jthread thread,
+                                          jmethodID method,
+                                          jlocation location,
+                                          jclass field_klass,
+                                          jobject object,
+                                          jfieldID field,
+                                          char signature_type,
+                                          jvalue new_value)
 {
 }
 
-void JNICALL jrst_EventFramePop
-    (jvmtiEnv *jvmti_env,
-     JNIEnv* jni_env,
-     jthread thread,
-     jmethodID method,
-     jboolean was_popped_by_exception)
+void JNICALL jrst_EventFramePop (jvmtiEnv *jvmti_env,
+                                 JNIEnv* jni_env,
+                                 jthread thread,
+                                 jmethodID method,
+                                 jboolean was_popped_by_exception)
 {
 }
 
@@ -221,126 +182,111 @@ void JNICALL jrst_EventGarbageCollectionFinish (jvmtiEnv *jvmti_env)
 {
 }
 
-void JNICALL jrst_EventGarbageCollectionStart
-    (jvmtiEnv *jvmti_env)
+void JNICALL jrst_EventGarbageCollectionStart (jvmtiEnv *jvmti_env)
 {
 }
 
-void JNICALL jrst_EventMethodEntry
-    (jvmtiEnv *jvmti_env,
-     JNIEnv* jni_env,
-     jthread thread,
-     jmethodID method)
+void JNICALL jrst_EventMethodEntry (jvmtiEnv *jvmti_env,
+                                    JNIEnv* jni_env,
+                                    jthread thread,
+                                    jmethodID method)
 {
 }
 
-void JNICALL jrst_EventMethodExit
-    (jvmtiEnv *jvmti_env,
-     JNIEnv* jni_env,
-     jthread thread,
-     jmethodID method,
-     jboolean was_popped_by_exception,
-     jvalue return_value)
+void JNICALL jrst_EventMethodExit (jvmtiEnv *jvmti_env,
+                                   JNIEnv* jni_env,
+                                   jthread thread,
+                                   jmethodID method,
+                                   jboolean was_popped_by_exception,
+                                   jvalue return_value)
 {
 }
 
-void JNICALL jrst_EventMonitorContendedEnter
-    (jvmtiEnv *jvmti_env,
-     JNIEnv* jni_env,
-     jthread thread,
-     jobject object)
+void JNICALL jrst_EventMonitorContendedEnter (jvmtiEnv *jvmti_env,
+                                              JNIEnv* jni_env,
+                                              jthread thread,
+                                              jobject object)
 {
 }
 
-void JNICALL jrst_EventMonitorContendedEntered
-    (jvmtiEnv *jvmti_env,
-     JNIEnv* jni_env,
-     jthread thread,
-     jobject object)
+void JNICALL jrst_EventMonitorContendedEntered (jvmtiEnv *jvmti_env,
+                                                JNIEnv* jni_env,
+                                                jthread thread,
+                                                jobject object)
 {
 }
 
-void JNICALL jrst_EventMonitorWait
-    (jvmtiEnv *jvmti_env,
-     JNIEnv* jni_env,
-     jthread thread,
-     jobject object,
-     jlong timeout)
+void JNICALL jrst_EventMonitorWait (jvmtiEnv *jvmti_env,
+                                    JNIEnv* jni_env,
+                                    jthread thread,
+                                    jobject object,
+                                    jlong timeout)
 {
 }
 
-void JNICALL jrst_EventMonitorWaited
-    (jvmtiEnv *jvmti_env,
-     JNIEnv* jni_env,
-     jthread thread,
-     jobject object,
-     jboolean timed_out)
+void JNICALL jrst_EventMonitorWaited (jvmtiEnv *jvmti_env,
+                                      JNIEnv* jni_env,
+                                      jthread thread,
+                                      jobject object,
+                                      jboolean timed_out)
 {
 }
 
-void JNICALL jrst_EventNativeMethodBind
-    (jvmtiEnv *jvmti_env,
-     JNIEnv* jni_env,
-     jthread thread,
-     jmethodID method,
-     void* address,
-     void** new_address_ptr)
+void JNICALL jrst_EventNativeMethodBind (jvmtiEnv *jvmti_env,
+                                         JNIEnv* jni_env,
+                                         jthread thread,
+                                         jmethodID method,
+                                         void* address,
+                                         void** new_address_ptr)
 {
 }
 
-void JNICALL jrst_EventObjectFree
-    (jvmtiEnv *jvmti_env,
-     jlong tag)
+void JNICALL jrst_EventObjectFree (jvmtiEnv *jvmti_env,
+                                   jlong tag)
 {
 }
 
-void JNICALL jrst_EventResourceExhausted
-    (jvmtiEnv *jvmti_env,
-     JNIEnv* jni_env,
-     jint flags,
-     const void* reserved,
-     const char* description)
+void JNICALL jrst_EventResourceExhausted (jvmtiEnv *jvmti_env,
+                                          JNIEnv* jni_env,
+                                          jint flags,
+                                          const void* reserved,
+                                          const char* description)
 {
 }
 
-void JNICALL jrst_EventSingleStep
-    (jvmtiEnv *jvmti_env,
-     JNIEnv* jni_env,
-     jthread thread,
-     jmethodID method,
-     jlocation location)
+void JNICALL jrst_EventSingleStep (jvmtiEnv *jvmti_env,
+                                   JNIEnv* jni_env,
+                                   jthread thread,
+                                   jmethodID method,
+                                   jlocation location)
 {
 }
 
-void JNICALL jrst_EventThreadStart
-    (jvmtiEnv *jvmti_env,
-     JNIEnv* jni_env,
-     jthread thread)
+void JNICALL jrst_EventThreadStart (jvmtiEnv *jvmti_env,
+                                    JNIEnv* jni_env,
+                                    jthread thread)
 {
   char name[JRST_MAX_THREAD_NAME];
   jrst_get_thread_name(GET_JVMTI(), thread, name, JRST_MAX_THREAD_NAME);
   trace_initialize(GET_JVMTI(), thread, name);
 }
 
-void JNICALL jrst_EventThreadEnd
-    (jvmtiEnv *jvmti_env,
-     JNIEnv* jni_env,
-     jthread thread)
+void JNICALL jrst_EventThreadEnd (jvmtiEnv *jvmti_env,
+                                  JNIEnv* jni_env,
+                                  jthread thread)
 {
   trace_finalize(GET_JVMTI(), thread);
 }
 
-void JNICALL jrst_EventVMDeath
-    (jvmtiEnv *jvmti_env,
-     JNIEnv* jni_env)
+void JNICALL jrst_EventVMDeath (jvmtiEnv *jvmti_env,
+                                JNIEnv* jni_env)
 {
   trace_flush_buffers();
 }
 
-void JNICALL jrst_EventVMInit
-    (jvmtiEnv *jvmti_env,
-     JNIEnv* jni_env,
-     jthread thread)
+void JNICALL jrst_EventVMInit (jvmtiEnv *jvmti_env,
+                               JNIEnv* jni_env,
+                               jthread thread)
 {
   jrst_enter_critical_section(GET_JVMTI(), jrst->monitor);
 
@@ -426,18 +372,16 @@ void JNICALL jrst_EventVMInit
   jrst_exit_critical_section(GET_JVMTI(), jrst->monitor);
 }
 
-void JNICALL jrst_EventVMObjectAlloc
-    (jvmtiEnv *jvmti_env,
-     JNIEnv* jni_env,
-     jthread thread,
-     jobject object,
-     jclass object_klass,
-     jlong size)
+void JNICALL jrst_EventVMObjectAlloc (jvmtiEnv *jvmti_env,
+                                      JNIEnv* jni_env,
+                                      jthread thread,
+                                      jobject object,
+                                      jclass object_klass,
+                                      jlong size)
 {
 }
 
-void JNICALL jrst_EventVMStart
-    (jvmtiEnv *jvmti_env,
-     JNIEnv* jni_env)
+void JNICALL jrst_EventVMStart (jvmtiEnv *jvmti_env,
+                                JNIEnv* jni_env)
 {
 }
