@@ -23,18 +23,22 @@ Using
 JRastro is a JVMTI agent, so you can invoke it as you'll do for any
 other JVMTI agent. Here's a way to do it:
 
-   $ java -agentpath:/path/to/your/libjrastro.so YourJavaApplication
+    $ java -agentpath:/path/to/your/libjrastro.so YourJavaApplication
 
 You have four environment variables that you need to set before
 launching your application with the JRastro agent:
 
-* JRST_THREAD_TRACING
-* JRST_METHOD_TRACING
-* JRST_MONITOR_TRACING
-* JRST_GC_TRACING
+* JRST_THREAD_TRACING : Traces the start and end of Java threads
+* JRST_METHOD_TRACING : Requires the first, traces the beginning and end of all methods
+* JRST_MONITOR_TRACING : Traces monitors of Java threads
+* JRST_GC_TRACING : Traces the garbage collector (when it is active, when it is not)
 
-The agent will create a trace file for each thread present in your
-application. A run with three threads generate this list of files:
+Depending on the existence of these environment variables, the agent
+will trace the application creating a number of trace
+files. Generally, it creates one trace file per thread present in the
+application, plus one trace file to register the monitor behavior,
+another for the garbage collector. A run with three threads generate
+may generate this list of files:
 
     rastro-0-0.rst
     rastro-1-0.rst
