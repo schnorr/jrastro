@@ -44,6 +44,12 @@ JNIEXPORT jint JNICALL Agent_OnLoad(JavaVM *jvm,
     jrst = (jrst_agent*) malloc (sizeof(jrst_agent));
   }
 
+  //get user options through environment variables
+  if (getenv ("JRST_THREAD_TRACING")) jrst->thread_tracing = 1;
+  if (getenv ("JRST_METHOD_TRACING")) jrst->method_tracing = 1;
+  if (getenv ("JRST_MONITOR_TRACING")) jrst->monitor_tracing = 1;
+  if (getenv ("JRST_GC_TRACING")) jrst->gc_tracing = 1;
+
   //get the jvmti reference, save it in the global agent
   ret = (*jvm)->GetEnv(jvm, (void*)(&jrst->jvmti), JVMTI_VERSION_1_0);
   if (ret != JNI_OK || jrst->jvmti == NULL) {

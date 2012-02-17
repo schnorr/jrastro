@@ -17,6 +17,12 @@ typedef struct {
   jrawMonitorID monitor_buffer;
   jrawMonitorID monitor_new_array;
   jrawMonitorID monitor_tag;
+
+  //tracing configuration
+  int thread_tracing;
+  int method_tracing;
+  int monitor_tracing;
+  int gc_tracing;
 } jrst_agent;
 
 extern jrst_agent *jrst;
