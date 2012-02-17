@@ -108,6 +108,19 @@ void rst_event_isii_f_( int16_t *type, int32_t* i0, const char* s0, int32_t* i1,
   rst_event_isii ((u_int16_t)* type, (u_int32_t)* i0,  s0, (u_int32_t)* i1, (u_int32_t)* i2);
 }
 
+/* Rastro function implementation for 's' */
+void rst_event_s_ptr(rst_buffer_t *ptr, u_int16_t type, const char* s0)
+{
+  rst_startevent(ptr, type<<18|0x21000);
+  RST_PUT_STR(ptr, s0);
+  rst_endevent(ptr);
+}
+/* Rastro function implementation for 's' - fortran support */
+void rst_event_s_f_( int16_t *type, const char* s0)
+{
+  rst_event_s ((u_int16_t)* type,  s0);
+}
+
 void rst_init_f_(int64_t *id1, int64_t *id2)
 {
   rst_init((u_int64_t)* id1, (u_int64_t)* id2);
