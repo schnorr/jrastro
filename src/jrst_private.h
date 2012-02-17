@@ -23,7 +23,15 @@ extern jrst_agent *jrst;
 extern unsigned long long jrst_jvmid;
 
 #define GET_JVMTI() (jrst->jvmti)
-#define JRST_MAX_THREAD_NAME 1000
+#define MONITOR_ENTER(monitor) (*GET_JVMTI())->RawMonitorEnter(GET_JVMTI(), monitor)
+#define MONITOR_EXIT(monitor) (*GET_JVMTI())->RawMonitorExit(GET_JVMTI(), monitor)
+#define GET_BUFFER(ptr) (*GET_JVMTI())->GetThreadLocalStorage(GET_JVMTI(), thread, (void **) &ptr)
+#define SET_BUFFER(ptr) (*GET_JVMTI())->SetThreadLocalStorage(GET_JVMTI(), thread, ptr)
+
+#define JRST_MAX_STRING 1000
+#define JRST_MAX_THREAD_NAME JRST_MAX_STRING
+#define THE_MONITOR_THREAD 5000
+#define THE_LOADER_THREAD  5001
 
 //callbacks prototypes
 void JNICALL jrst_EventBreakpoint
@@ -230,38 +238,32 @@ void JNICALL jrst_EventVMStart
     (jvmtiEnv *jvmti_env,
      JNIEnv* jni_env);
 
-//from jrst.c
-void jrst_describe_error(jvmtiEnv * jvmtiLocate, jvmtiError error);
-void jrst_check_error(jvmtiEnv * jvmtiLocate,
-                      jvmtiError error,
-                      const char *message);
-void jrst_enter_critical_section(jvmtiEnv * jvmtiLocate,
-                                 jrawMonitorID monitor);
-void jrst_exit_critical_section(jvmtiEnv * jvmtiLocate,
-                                jrawMonitorID monitor);
-void jrst_get_thread_name(jvmtiEnv * jvmtiLocate,
-                          jthread thread,
-                          char *name,
-                          int numMax);
-
 //from jrst_trace.c
 void trace_finalize_buffers (void);
-void trace_initialize(jvmtiEnv * jvmtiLocate, jthread thread, char *name);
-void trace_finalize(jvmtiEnv * jvmtiLocate, jthread thread);
+void trace_thread_start(jvmtiEnv * jvmti, jthread thread, char *name);
+void trace_thread_end(jvmtiEnv * jvmti, jthread thread, char *name);
 void trace_event_object_free(jlong tag);
 void trace_event_gc_start(void);
 void trace_event_gc_finish(void);
-void trace_event_monitor_contended_enter(jvmtiEnv * jvmtiLocate,
+void trace_event_monitor_contended_enter(jvmtiEnv * jvmti,
                                          jthread thread,
                                          int object);
-void trace_event_monitor_contended_entered(jvmtiEnv * jvmtiLocate,
+void trace_event_monitor_contended_entered(jvmtiEnv * jvmti,
                                            jthread thread,
                                            int object);
-void trace_event_monitor_wait(jvmtiEnv * jvmtiLocate,
+void trace_event_monitor_wait(jvmtiEnv * jvmti,
                               jthread thread,
                               int object);
-void trace_event_monitor_waited(jvmtiEnv * jvmtiLocate,
+void trace_event_monitor_waited(jvmtiEnv * jvmti,
                                 jthread thread,
                                 int object);
+void trace_event_method_entry(jthread thread, char *method_name);
+void trace_event_method_exit(jthread thread, char *method_name);
+void trace_event_exception(jthread thread, int exception);
+void trace_event_method_exit_exception(jthread thread);
+void trace_event_method_load(int method, char *name, unsigned access_flags,
+                             int klass);
+void trace_event_class_load(int klass, char *name);
+
 
 #endif

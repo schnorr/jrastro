@@ -31,199 +31,206 @@ void trace_finalize_buffers (void)
   size = used = 0;
 }
 
-void trace_initialize(jvmtiEnv * jvmtiLocate, jthread thread, char *name)
+void trace_thread_start (jvmtiEnv * jvmti, jthread thread, char *name)
 {
-  static unsigned long long threadId = 0;
-  rst_buffer_t *ptr;
-  jvmtiThreadInfo infoThread;
-  jvmtiError error;
+  static unsigned long long counter = 0;
+  MONITOR_ENTER(jrst->monitor_thread);
 
-  //allocate space for keep pointers to all buffers
+  //allocate the buffer to keep this thread's events
+  rst_buffer_t *ptr = (rst_buffer_t *) malloc(sizeof(rst_buffer_t));
+
+  //set the buffer to the local storage of this thread
+  SET_BUFFER(ptr);
+
+  //rastro init, and first event
+  rst_init_ptr(ptr,
+               (u_int64_t) jrst_jvmid,
+               (u_int64_t) counter);
+  rst_event_s_ptr(ptr, JRST_THREAD_START, name);
+
+  //book-keeping of all buffers to flush them at the end
   if (buffers == NULL){
     size = 2;
     buffers = (rst_buffer_t**) malloc (size * sizeof(rst_buffer_t*));
   }
-
   if (used+1 > size){
     size = size * 2;
     buffers = (rst_buffer_t**) realloc (buffers,
                                         size * sizeof(rst_buffer_t*));
   }
 
-  //allocate one buffer
-  ptr = (rst_buffer_t *) malloc(sizeof(rst_buffer_t));
+  //place this thread's buffer in the index position of buffers
+  buffers[counter] = ptr;
 
-  //put it in the list of buffers
-  buffers[used++] = ptr;
+  //buffers population has increased
+  used++;
 
-  jrst_enter_critical_section(jvmtiLocate, jrst->monitor_thread);
-  error = (*jvmtiLocate)->GetThreadInfo(jvmtiLocate, thread, &infoThread);
-  jrst_check_error(jvmtiLocate, error, "Cannot get Thread Info");
+  //increment the thread counter for the next one
+  counter++;
 
-  rst_init_ptr(ptr,
-               (u_int64_t) jrst_jvmid,
-               (u_int64_t) threadId++);
-
-  rst_event_isiii_ptr(ptr, JRST_INITIALIZE, (int) threadId, name,
-                      (int) infoThread.priority,
-                      (int) infoThread.is_daemon,
-                      (int) infoThread.thread_group);
-
-  error = (*jvmtiLocate)->SetThreadLocalStorage(jvmtiLocate, thread, (void *) ptr);
-  jrst_check_error(jvmtiLocate, error, "Cannot Set Thread Local Storage");
-  jrst_exit_critical_section(jvmtiLocate, jrst->monitor_thread);
-
-  error = (*jvmtiLocate)->Deallocate(jvmtiLocate, (unsigned char *) infoThread.name);
-  jrst_check_error(jvmtiLocate, error, "Cannot deallocate memory");
+  MONITOR_EXIT(jrst->monitor_thread);
 }
 
-void trace_finalize(jvmtiEnv * jvmtiLocate, jthread thread)
+void trace_thread_end (jvmtiEnv * jvmti, jthread thread, char *name)
 {
-  rst_buffer_t *ptr;
-  jvmtiError error;
-
-  jrst_enter_critical_section(jvmtiLocate, jrst->monitor_thread);
-
-  error =
-    (*jvmtiLocate)->GetThreadLocalStorage(jvmtiLocate, thread,
-                                          (void **) &ptr);
-  if (ptr == NULL) {
-    jrst_check_error(jvmtiLocate, error, "Cannot deallocate memory");
-    jrst_exit_critical_section(jvmtiLocate, jrst->monitor_thread);
-    return;
+  MONITOR_ENTER(jrst->monitor_thread);
+  rst_buffer_t *ptr = NULL;
+  GET_BUFFER(ptr);
+  buffers[ptr->id2] = NULL;
+  if (ptr != NULL){
+    rst_event_ptr(ptr, JRST_THREAD_END);
+    rst_finalize_ptr(ptr);
   }
+  SET_BUFFER(NULL);
 
-  rst_event_ptr(ptr, JRST_FINALIZE);
-  rst_finalize_ptr(ptr);
 
-  error =
-    (*jvmtiLocate)->SetThreadLocalStorage(jvmtiLocate, thread, NULL);
-  jrst_check_error(jvmtiLocate, error,
-                   "Cannot Set Thread Local Storage");
 
-  jrst_exit_critical_section(jvmtiLocate, jrst->monitor_thread);
+  MONITOR_EXIT(jrst->monitor_thread);
 }
 
-
-#define THREAD_MONITOR 4321
 void trace_event_object_free(jlong tag)
 {
-  jrst_enter_critical_section(GET_JVMTI(), jrst->monitor_buffer);
+  MONITOR_ENTER(jrst->monitor_buffer);
   if (ptr_monitor == NULL) {
     ptr_monitor = (rst_buffer_t *) malloc(sizeof(rst_buffer_t));
     rst_init_ptr(ptr_monitor,
                  (u_int64_t) jrst_jvmid,
-                 (u_int64_t) THREAD_MONITOR);
+                 (u_int64_t) THE_MONITOR_THREAD);
   }
   rst_event_i_ptr(ptr_monitor, JVMTI_EVENT_OBJECT_FREE, (int) tag);
-  jrst_exit_critical_section(GET_JVMTI(), jrst->monitor_buffer);
+  MONITOR_EXIT(jrst->monitor_buffer);
 }
 
 void trace_event_gc_start()
 {
-  jrst_enter_critical_section(GET_JVMTI(), jrst->monitor_buffer);
+  MONITOR_ENTER(jrst->monitor_buffer);
   if (ptr_monitor == NULL) {
     ptr_monitor = (rst_buffer_t *) malloc(sizeof(rst_buffer_t));
     rst_init_ptr(ptr_monitor,
                  (u_int64_t) jrst_jvmid,
-                 (u_int64_t) THREAD_MONITOR);
+                 (u_int64_t) THE_MONITOR_THREAD);
   }
   rst_event_ptr(ptr_monitor, JVMTI_EVENT_GARBAGE_COLLECTION_START);
-  jrst_exit_critical_section(GET_JVMTI(), jrst->monitor_buffer);
+  MONITOR_EXIT(jrst->monitor_buffer);
 }
 
 void trace_event_gc_finish()
 {
-  jrst_enter_critical_section(GET_JVMTI(), jrst->monitor_buffer);
+  MONITOR_ENTER(jrst->monitor_buffer);
   rst_event_ptr(ptr_monitor, JVMTI_EVENT_GARBAGE_COLLECTION_FINISH);
-  jrst_exit_critical_section(GET_JVMTI(), jrst->monitor_buffer);
+  MONITOR_EXIT(jrst->monitor_buffer);
 }
-#undef THREAD_MONITOR
 
-void trace_event_monitor_contended_enter(jvmtiEnv * jvmtiLocate,
+void trace_event_monitor_contended_enter(jvmtiEnv * jvmti,
                                          jthread thread,
                                          int object)
 {
-  rst_buffer_t *ptr;
-  jvmtiError error;
-
-  jrst_enter_critical_section(GET_JVMTI(), jrst->monitor_thread);
-
-  error =
-    (*GET_JVMTI())->GetThreadLocalStorage(GET_JVMTI(), thread,
-                                          (void **) &ptr);
-  if (ptr == NULL) {
-    jrst_exit_critical_section(GET_JVMTI(), jrst->monitor_thread);
-    return;
+  MONITOR_ENTER(jrst->monitor_thread);
+  rst_buffer_t *ptr = NULL;
+  GET_BUFFER(ptr);
+  if (ptr != NULL){
+    rst_event_i_ptr(ptr, JRST_MONITOR_ENTER, object);
   }
-
-  rst_event_i_ptr(ptr, JRST_MONITOR_ENTER, object);
-
-  jrst_exit_critical_section(GET_JVMTI(), jrst->monitor_thread);
+  MONITOR_EXIT(jrst->monitor_thread);
 }
 
-void trace_event_monitor_contended_entered(jvmtiEnv * jvmtiLocate,
+void trace_event_monitor_contended_entered(jvmtiEnv * jvmti,
                                            jthread thread,
                                            int object)
 {
-  rst_buffer_t *ptr;
-  jvmtiError error;
-
-  jrst_enter_critical_section(GET_JVMTI(), jrst->monitor_thread);
-
-  error =
-    (*GET_JVMTI())->GetThreadLocalStorage(GET_JVMTI(), thread,
-                                          (void **) &ptr);
-  if (ptr == NULL) {
-    jrst_exit_critical_section(GET_JVMTI(), jrst->monitor_thread);
-    return;
+  MONITOR_ENTER(jrst->monitor_thread);
+  rst_buffer_t *ptr = NULL;
+  GET_BUFFER(ptr);
+  if (ptr != NULL){
+    rst_event_i_ptr(ptr, JRST_MONITOR_ENTERED, object);
   }
-
-  rst_event_i_ptr(ptr, JRST_MONITOR_ENTERED, object);
-
-  jrst_exit_critical_section(GET_JVMTI(), jrst->monitor_thread);
+  MONITOR_EXIT(jrst->monitor_thread);
 }
 
-void trace_event_monitor_wait(jvmtiEnv * jvmtiLocate, jthread thread,
+void trace_event_monitor_wait(jvmtiEnv * jvmti, jthread thread,
                               int object)
 {
-  rst_buffer_t *ptr;
-  jvmtiError error;
-
-  jrst_enter_critical_section(GET_JVMTI(), jrst->monitor_thread);
-
-  error =
-    (*GET_JVMTI())->GetThreadLocalStorage(GET_JVMTI(),
-                                          thread,
-                                          (void **) &ptr);
-  if (ptr == NULL) {
-    jrst_exit_critical_section(GET_JVMTI(), jrst->monitor_thread);
-    return;
+  MONITOR_ENTER(jrst->monitor_thread);
+  rst_buffer_t *ptr = NULL;
+  GET_BUFFER(ptr);
+  if (ptr != NULL){
+    rst_event_i_ptr(ptr, JRST_MONITOR_WAIT, object);
   }
-
-  rst_event_i_ptr(ptr, JRST_MONITOR_WAIT, object);
-
-  jrst_exit_critical_section(GET_JVMTI(), jrst->monitor_thread);
+  MONITOR_EXIT(jrst->monitor_thread);
 }
 
-void trace_event_monitor_waited(jvmtiEnv * jvmtiLocate, jthread thread,
+void trace_event_monitor_waited(jvmtiEnv * jvmti, jthread thread,
                                 int object)
 {
-  rst_buffer_t *ptr;
-  jvmtiError error;
-
-  jrst_enter_critical_section(GET_JVMTI(), jrst->monitor_thread);
-
-  error =
-    (*GET_JVMTI())->GetThreadLocalStorage(GET_JVMTI(),
-                                          thread,
-                                          (void **) &ptr);
-  if (ptr == NULL) {
-    jrst_exit_critical_section(GET_JVMTI(), jrst->monitor_thread);
-    return;
+  MONITOR_ENTER(jrst->monitor_thread);
+  rst_buffer_t *ptr = NULL;
+  GET_BUFFER(ptr);
+  if (ptr != NULL){
+    rst_event_i_ptr(ptr, JRST_MONITOR_WAITED, object);
   }
+  MONITOR_EXIT(jrst->monitor_thread);
+}
 
-  rst_event_i_ptr(ptr, JRST_MONITOR_WAITED, object);
 
-  jrst_exit_critical_section(GET_JVMTI(), jrst->monitor_thread);
+void trace_event_method_entry(jthread thread, char *method_name)
+{
+  MONITOR_ENTER(jrst->monitor_thread);
+  rst_buffer_t *ptr = NULL;
+  GET_BUFFER(ptr);
+  if (ptr != NULL){
+    rst_event_s_ptr(ptr, JRST_METHOD_ENTRY, method_name);
+  }
+  MONITOR_EXIT(jrst->monitor_thread);
+}
+
+;
+void trace_event_method_exit(jthread thread, char *method_name)
+{
+  MONITOR_ENTER(jrst->monitor_thread);
+  rst_buffer_t *ptr = NULL;
+  GET_BUFFER(ptr);
+  if (ptr != NULL){
+    rst_event_s_ptr(ptr, JRST_METHOD_EXIT, method_name);
+  }
+  MONITOR_EXIT(jrst->monitor_thread);
+}
+
+void trace_event_exception(jthread thread, int exception)
+{
+  MONITOR_ENTER(jrst->monitor_thread);
+  rst_buffer_t *ptr = NULL;
+  GET_BUFFER(ptr);
+  if (ptr != NULL){
+    rst_event_i_ptr(ptr, JRST_METHOD_EXCEPTION, exception);
+  }
+  MONITOR_EXIT(jrst->monitor_thread);
+}
+
+void trace_event_method_exit_exception(jthread thread)
+{
+  MONITOR_ENTER(jrst->monitor_thread);
+  rst_buffer_t *ptr = NULL;
+  GET_BUFFER(ptr);
+  if (ptr != NULL){
+    rst_event_ptr(ptr, JRST_METHOD_EXIT_EXCEPTION);
+  }
+  MONITOR_EXIT(jrst->monitor_thread);
+}
+
+void trace_event_method_load(int method, char *name, unsigned access_flags,
+                             int klass)
+{
+  rst_event_isii_ptr(ptr_loader, JRST_METHOD_LOAD, method, name, klass,
+                     access_flags);
+}
+
+void trace_event_class_load(int klass, char *name)
+{
+  if (ptr_loader == NULL) {
+    ptr_loader = (rst_buffer_t *) malloc(sizeof(rst_buffer_t));
+    rst_init_ptr(ptr_loader,
+                 (u_int64_t) jrst_jvmid,
+                 (u_int64_t) THE_LOADER_THREAD);
+  }
+  rst_event_is_ptr(ptr_loader, JRST_CLASS_LOAD, klass, name);
 }

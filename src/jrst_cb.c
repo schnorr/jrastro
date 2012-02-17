@@ -20,7 +20,7 @@ void JNICALL jrst_EventClassFileLoadHook (jvmtiEnv *jvmti_env,
                                           jint* new_class_data_len,
                                           unsigned char** new_class_data)
 {
-  /* jrst_enter_critical_section(jvmtiLocate, gagent->monitor); */
+  MONITOR_ENTER(jrst->monitor);
 
   /* if (initialized == false) { */
 
@@ -82,7 +82,7 @@ void JNICALL jrst_EventClassFileLoadHook (jvmtiEnv *jvmti_env,
   /* } */
   /* class_number++; */
 
-  /* jrst_exit_critical_section(jvmtiLocate, gagent->monitor); */
+  MONITOR_EXIT(jrst->monitor);
 }
 
 void JNICALL jrst_EventClassLoad (jvmtiEnv *jvmti_env,
@@ -193,6 +193,16 @@ void JNICALL jrst_EventMethodEntry (jvmtiEnv *jvmti_env,
                                     jthread thread,
                                     jmethodID method)
 {
+  char *name, *signature, *generic;
+  jvmtiError error = (*GET_JVMTI())->GetMethodName(GET_JVMTI(),
+                                                   method,
+                                                   &name,
+                                                   &signature,
+                                                   &generic);
+  trace_event_method_entry (thread, name);
+  (*GET_JVMTI())->Deallocate (GET_JVMTI(), (unsigned char*)name);
+  (*GET_JVMTI())->Deallocate (GET_JVMTI(), (unsigned char*)signature);
+  (*GET_JVMTI())->Deallocate (GET_JVMTI(), (unsigned char*)generic);
 }
 
 void JNICALL jrst_EventMethodExit (jvmtiEnv *jvmti_env,
@@ -202,6 +212,16 @@ void JNICALL jrst_EventMethodExit (jvmtiEnv *jvmti_env,
                                    jboolean was_popped_by_exception,
                                    jvalue return_value)
 {
+  char *name, *signature, *generic;
+  jvmtiError error = (*GET_JVMTI())->GetMethodName(GET_JVMTI(),
+                                                   method,
+                                                   &name,
+                                                   &signature,
+                                                   &generic);
+  trace_event_method_exit (thread, name);
+  (*GET_JVMTI())->Deallocate (GET_JVMTI(), (unsigned char*)name);
+  (*GET_JVMTI())->Deallocate (GET_JVMTI(), (unsigned char*)signature);
+  (*GET_JVMTI())->Deallocate (GET_JVMTI(), (unsigned char*)generic);
 }
 
 void JNICALL jrst_EventMonitorContendedEnter (jvmtiEnv *jvmti_env,
@@ -210,8 +230,7 @@ void JNICALL jrst_EventMonitorContendedEnter (jvmtiEnv *jvmti_env,
                                               jobject object)
 {
   jlong tag;
-  jvmtiError error = (*GET_JVMTI())->GetTag(GET_JVMTI(), object, &tag);
-  jrst_check_error(GET_JVMTI(), error, "Cannot get object tag");
+  (*GET_JVMTI())->GetTag(GET_JVMTI(), object, &tag);
   trace_event_monitor_contended_enter(jvmti_env, thread, (int) tag);
 }
 
@@ -221,8 +240,7 @@ void JNICALL jrst_EventMonitorContendedEntered (jvmtiEnv *jvmti_env,
                                                 jobject object)
 {
   jlong tag;
-  jvmtiError error = (*GET_JVMTI())->GetTag(GET_JVMTI(), object, &tag);
-  jrst_check_error(GET_JVMTI(), error, "Cannot get object tag");
+  (*GET_JVMTI())->GetTag(GET_JVMTI(), object, &tag);
   trace_event_monitor_contended_entered(jvmti_env, thread, (int) tag);
 }
 
@@ -233,8 +251,7 @@ void JNICALL jrst_EventMonitorWait (jvmtiEnv *jvmti_env,
                                     jlong timeout)
 {
   jlong tag;
-  jvmtiError error = (*GET_JVMTI())->GetTag(GET_JVMTI(), object, &tag);
-  jrst_check_error(GET_JVMTI(), error, "Cannot get object tag");
+  (*GET_JVMTI())->GetTag(GET_JVMTI(), object, &tag);
   trace_event_monitor_wait(jvmti_env, thread, (int) tag);
 }
 
@@ -245,8 +262,7 @@ void JNICALL jrst_EventMonitorWaited (jvmtiEnv *jvmti_env,
                                       jboolean timed_out)
 {
   jlong tag;
-  jvmtiError error = (*GET_JVMTI())->GetTag(GET_JVMTI(), object, &tag);
-  jrst_check_error(GET_JVMTI(), error, "Cannot get object tag");
+  (*GET_JVMTI())->GetTag(GET_JVMTI(), object, &tag);
   trace_event_monitor_waited(jvmti_env, thread, (int) tag);
 }
 
@@ -285,35 +301,32 @@ void JNICALL jrst_EventThreadStart (jvmtiEnv *jvmti_env,
                                     JNIEnv* jni_env,
                                     jthread thread)
 {
-  char name[JRST_MAX_THREAD_NAME];
-  jrst_get_thread_name(GET_JVMTI(), thread, name, JRST_MAX_THREAD_NAME);
-  trace_initialize(GET_JVMTI(), thread, name);
+  jvmtiThreadInfo info;
+  bzero (&info, sizeof(jvmtiThreadInfo));
+  (*GET_JVMTI())->GetThreadInfo(GET_JVMTI(), thread, &info);
+  trace_thread_start (GET_JVMTI(), thread, info.name);
 }
 
 void JNICALL jrst_EventThreadEnd (jvmtiEnv *jvmti_env,
                                   JNIEnv* jni_env,
                                   jthread thread)
 {
-  trace_finalize(GET_JVMTI(), thread);
+  jvmtiThreadInfo info;
+  bzero (&info, sizeof(jvmtiThreadInfo));
+  (*GET_JVMTI())->GetThreadInfo(GET_JVMTI(), thread, &info);
+  trace_thread_end (GET_JVMTI(), thread, info.name);
 }
 
 void JNICALL jrst_EventVMDeath (jvmtiEnv *jvmti_env,
                                 JNIEnv* jni_env)
 {
-  trace_flush_buffers();
 }
 
 void JNICALL jrst_EventVMInit (jvmtiEnv *jvmti_env,
                                JNIEnv* jni_env,
                                jthread thread)
 {
-  jrst_enter_critical_section(GET_JVMTI(), jrst->monitor);
-
-  //define a unique JVM id
-  struct timeval rt;
-  gettimeofday(&rt, NULL);
-  jrst_jvmid = rt.tv_sec * 1000000 + rt.tv_usec;
-
+  MONITOR_ENTER(jrst->monitor);
 
   /* /\*Funcao que abilita as opcoes dos eventos *\/ */
   /* jrst_read_events_enable(jvmtiLocate); */
@@ -384,11 +397,8 @@ void JNICALL jrst_EventVMInit (jvmtiEnv *jvmti_env,
   /*   jrst_threads(jvmtiLocate); */
   /* } */
 
-  char name[JRST_MAX_THREAD_NAME];
-  jrst_get_thread_name(GET_JVMTI(), thread, name, JRST_MAX_THREAD_NAME);
-  trace_initialize(GET_JVMTI(), thread, name);
 
-  jrst_exit_critical_section(GET_JVMTI(), jrst->monitor);
+  MONITOR_EXIT(jrst->monitor);
 }
 
 void JNICALL jrst_EventVMObjectAlloc (jvmtiEnv *jvmti_env,
