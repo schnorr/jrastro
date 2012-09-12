@@ -11,7 +11,7 @@ files are converted to the Paje file format using the tool called
 Compiling
 ---------
 
-    $ git clone git@github.com:schnorr/jrastro.git
+    $ git clone https://github.com/schnorr/jrastro.git
     $ mkdir jrastro/build ; cd build
     $ cmake -DRASTRO_PATH:PATH=/usr/local/ ..
     $ make
