@@ -12,7 +12,8 @@ Compiling
 ---------
 
     $ git clone https://github.com/schnorr/jrastro.git
-    $ mkdir jrastro/build ; cd build
+    $ mkdir -p jrastro/build ; cd jrastro/build
+    $ export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64/ # customize to your Java installation
     $ cmake -DRASTRO_PATH:PATH=/usr/local/ ..
     $ make
 
