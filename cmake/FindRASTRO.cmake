@@ -49,7 +49,7 @@ IF( NOT RASTRO_FOUND )
   MESSAGE(STATUS "RASTRO installation was not found. Please provide RASTRO_PATH:")
   MESSAGE(STATUS "  - through the GUI when working with ccmake, ")
   MESSAGE(STATUS "  - as a command line argument when working with cmake e.g.")
-  MESSAGE(STATUS "    cmake .. -DRASTRO_PATH:PATH=/usr/local/tau ")
+  MESSAGE(STATUS "    cmake .. -DRASTRO_PATH:PATH=/usr/local/rastro ")
   SET(RASTRO_PATH "" CACHE PATH "Root of RASTRO install tree." )
 ENDIF( NOT RASTRO_FOUND )
 
