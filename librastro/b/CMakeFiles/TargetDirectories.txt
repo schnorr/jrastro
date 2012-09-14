@@ -1,0 +1,3 @@
+/home/schnorr/dev/akypuera/librastro/b/CMakeFiles/rastro.dir
+/home/schnorr/dev/akypuera/librastro/b/examples/CMakeFiles/write1.dir
+/home/schnorr/dev/akypuera/librastro/b/examples/CMakeFiles/write2.dir

@@ -1,0 +1,1 @@
+/usr/bin/gcc  -fPIC    -shared -Wl,-soname,librastro.so -o librastro.so CMakeFiles/rastro.dir/src/rst_read.c.o CMakeFiles/rastro.dir/src/rst_write.c.o CMakeFiles/rastro.dir/src/rst_generate.c.o -lrt 

@@ -1,0 +1,1 @@
+/usr/bin/gcc      CMakeFiles/rastro_read.dir/src/read/rst_read.c.o  -o rastro_read -rdynamic librastro.so -lrt -Wl,-rpath,/home/schnorr/dev/akypuera/librastro/b 

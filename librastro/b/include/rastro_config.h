@@ -1,0 +1,8 @@
+#ifndef RASTRO_CONFIG_H
+#define RASTRO_CONFIG_H
+
+/* #undef LIBRASTRO_THREADED */
+#define HAVE_GETTIMEOFDAY 1
+#define HAVE_CLOCKGETTIME 1
+
+#endif

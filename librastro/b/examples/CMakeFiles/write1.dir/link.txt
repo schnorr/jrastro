@@ -1,0 +1,1 @@
+/usr/bin/gcc      CMakeFiles/write1.dir/write1.c.o CMakeFiles/write1.dir/auto-generated.c.o  -o write1 -rdynamic -L/home/schnorr/dev/akypuera/librastro/examples/../src ../librastro.so -lrt -Wl,-rpath,/home/schnorr/dev/akypuera/librastro/examples/../src:/home/schnorr/dev/akypuera/librastro/b 

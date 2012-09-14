@@ -1,0 +1,1 @@
+/usr/bin/gcc      CMakeFiles/rastro_generate.dir/src/generate/rst_generate.c.o  -o rastro_generate -rdynamic librastro.so -lrt -Wl,-rpath,/home/schnorr/dev/akypuera/librastro/b 

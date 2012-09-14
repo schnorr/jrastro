@@ -1,0 +1,1 @@
+/usr/bin/gcc      CMakeFiles/rastro_timesync.dir/src/timesync/rst_timesync.c.o  -o rastro_timesync -rdynamic librastro.so -lrt -Wl,-rpath,/home/schnorr/dev/akypuera/librastro/b 
