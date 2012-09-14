@@ -4,8 +4,10 @@ JRastro
 JRastro is a tracing library for Java applications based on the JVMTI
 interface. The library is released under GPLv3, and requires
 [librastro](https://github.com/schnorr/akypuera/tree/master/librastro)
-to provide a low memory footprint and low intrusion. The binary trace
-files are converted to the Paje file format using the tool called
+to provide a low memory footprint and low intrusion. Don't worry about
+the librastro depedency, we just made your life easier and included
+its source code directly here (thanks GPL3). The binary trace files
+are converted to the Paje file format using the tool called
 `jrastro_converter`.
 
 Compiling
@@ -14,7 +16,7 @@ Compiling
     $ git clone https://github.com/schnorr/jrastro.git
     $ mkdir -p jrastro/build ; cd jrastro/build
     $ export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64/ # customize to your Java installation
-    $ cmake -DRASTRO_PATH:PATH=/usr/local/ ..
+    $ cmake ..
     $ make
 
 
